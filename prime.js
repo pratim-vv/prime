@@ -20,3 +20,4 @@ function modPow(base, exponent, mod) {
     return result;
 }
 
+module.exports = { modPow, isPrimeFermat };
