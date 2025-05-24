@@ -105,5 +105,5 @@ function greatestCommonDivisor(a, b) {
 }
 
 
-module.exports = {isPrimeFermat, isPrimeMillerRabin, modPow, randomRange, greatestCommonDivisor };
+module.exports = {isPrimeFermat, isPrimeMillerRabin, modPow, randomRange, greatestCommonDivisor, shanksPeriod};
 
