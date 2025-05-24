@@ -43,6 +43,36 @@ function isPrimeMillerRabin(n, attempts=20) {
     return true;
 }
 
+// Inspired by "On Periods in the Reciprocals of Primes"
+function shanksPeriod(prime) {
+    let seen = {};
+    let max = parseInt('9'.repeat(String(prime).length));
+    for (let i = 1; i <= max; i++) {
+        seen[i] = 0;
+    }
+    let tracker = [];
+    let currentNumerator = 10;
+
+    while (true) {
+        let digit = Math.floor(currentNumerator / prime);
+        if (digit === 0) {
+            if (seen[currentNumerator]) break;
+            tracker.push(0);
+            seen[currentNumerator] = 1;
+            currentNumerator *= 10;
+            continue;
+        }
+        currentNumerator = currentNumerator - (prime * digit);
+        if (seen[currentNumerator]) break;
+        else {
+            seen[currentNumerator] = 1;
+            tracker.push(digit);
+            currentNumerator *= 10;
+        }
+    }
+    return tracker;
+}
+
 // Helper function for modular exponentiation
 function modPow(base, exponent, mod) {
     let result = 1;
