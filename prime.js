@@ -8,14 +8,16 @@ function isPrimeFermat(a, n) {
 
 // Probilistic Algorithm for Testing Primality paper
 function isPrimeMillerRabin(n, attempts=20) {
-    if (n <= 1) return false;
-    if (n % 2 === 0) return false;
-
     // small primes hardcoded for efficiency-sake
     if (n === 2 || n === 3) return true;
     if (n === 5 || n === 7) return true;
     if (n === 11 || n === 13) return true;
     if (n === 17 || n === 19) return true;
+
+    // base cases as indicated in paper
+    if (n <= 1) return false;
+    if (n % 2 === 0) return false;
+
 
     // variables as denoted in original paper
     let k =  n - 1;

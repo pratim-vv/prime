@@ -51,6 +51,7 @@ describe('isPrimeMillerRabin', () => {
 
     test('correctly identifies prime numbers', () => {
         expect(isPrimeMillerRabin(17)).toBeTruthy();
+        expect(isPrimeMillerRabin(2)).toBeTruthy();
         expect(isPrimeMillerRabin(6911)).toBeTruthy();
         // TODO: Set limit for largest prime or be able to handle large primes
         // expect(isPrimeMillerRabin(77777780837)).toBeTruthy(); 
