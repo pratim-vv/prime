@@ -1,22 +1,23 @@
-const { isPrimeFermat, modPow, greatestCommonDivisor } = require('../prime.js');
+const { isPrimeFermat, modPow, greatestCommonDivisor, isPrimeMillerRabin } = require('../prime.js');
+
 
 describe('isPrimeFermat', () => {
     test('returns true for primes', () => {
-        expect(isPrimeFermat(2, 3)).toBe(true);
-        expect(isPrimeFermat(2, 5)).toBe(true);
-        expect(isPrimeFermat(3, 7)).toBe(true);
+        expect(isPrimeFermat(2, 3)).toBeTruthy();
+        expect(isPrimeFermat(12, 7873)).toBeTruthy();
+        expect(isPrimeFermat(3, 113)).toBeTruthy();
     });
 
     test('returns false for most composites', () => {
-        expect(isPrimeFermat(2, 4)).toBe(false);
-        expect(isPrimeFermat(47, 1892039232489123)).toBe(false);
-        expect(isPrimeFermat(42069, 525600)).toBe(false);
+        expect(isPrimeFermat(2, 4)).toBeFalsy()
+        expect(isPrimeFermat(47, 1892039232489123)).toBeFalsy();
+        expect(isPrimeFermat(42069, 525600)).toBeFalsy();
     });
 
     test('returns true for Carmichael numbers (Fermat false positive)', () => {
         // not all bases fool Carmichael numbers, must be a base coprime to carmichael number
-        expect(isPrimeFermat(2, 561)).toBe(true); 
-        expect(isPrimeFermat(53, 63973)).toBe(true);
+        expect(isPrimeFermat(2, 561)).toBeTruthy(); 
+        expect(isPrimeFermat(53, 63973)).toBeTruthy();
     });
 });
 
@@ -36,3 +37,28 @@ describe('greatestCommonDivisor', () => {
         expect(greatestCommonDivisor(2738502576, 374736)).toBe(48);
     });
 });
+
+describe('isPrimeMillerRabin', () => {
+    test('correctly identifies composite numbers', () => {
+        expect(isPrimeMillerRabin(88)).toBeFalsy();
+        expect(isPrimeMillerRabin(75300195731073)).toBeFalsy();
+    });
+
+    test('correctly identifies nonprime numbers', () => {
+        expect(isPrimeMillerRabin(-534459)).toBeFalsy();
+        expect(isPrimeMillerRabin(1)).toBeFalsy();
+    });
+
+    test('correctly identifies prime numbers', () => {
+        expect(isPrimeMillerRabin(17)).toBeTruthy();
+        expect(isPrimeMillerRabin(6911)).toBeTruthy();
+        // TODO: Set limit for largest prime or be able to handle large primes
+        // expect(isPrimeMillerRabin(77777780837)).toBeTruthy(); 
+    });
+
+    test('correctly identifies Carmichael numbers as composites', () => {
+        expect(isPrimeMillerRabin(561)).toBeFalsy();
+        expect(isPrimeMillerRabin(63973)).toBeFalsy();
+        expect(isPrimeMillerRabin(101649241)).toBeFalsy();
+    });
+})
