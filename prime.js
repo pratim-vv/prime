@@ -18,7 +18,6 @@ function isPrimeMillerRabin(n, attempts=20) {
     if (n <= 1) return false;
     if (n % 2 === 0) return false;
 
-
     // variables as denoted in original paper
     let k =  n - 1;
     let i = 0;
