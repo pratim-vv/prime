@@ -46,6 +46,9 @@ function isPrimeMillerRabin(n, attempts=20) {
 
 // Inspired by "On Periods in the Reciprocals of Primes"
 function shanksPeriod(prime) {
+    if (prime == 2 || prime == 5) {
+        throw new RangeError("The function does not support primes 2 or 5.");
+    }
     let seen = {};
     let max = parseInt('9'.repeat(String(prime).length));
     for (let i = 1; i <= max; i++) {
