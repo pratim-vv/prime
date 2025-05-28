@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prime Number Analyzer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        input, button {
+            padding: 8px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .prime { background-color: #e0f2e9; color: #2e7d32; }
+        .composite { background-color: #ffebee; color: #c62828; }
+        .error { background-color: #fff3e0; color: #ef6c00; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Prime Number Analyzer</h1>
+        <input type="number" id="numberInput" placeholder="Enter a number" min="2">
+        <button onclick="analyzeNumber()">Check</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+                // Fermat's little theorem
+        function isPrimeFermat(a, n) {
+            if (modPow(a, n - 1, n) !== 1) {
+                return false;
+            }
+            return true;
+        }
+
+        // Probilistic Algorithm for Testing Primality paper
+        function isPrimeMillerRabin(n, attempts=20) {
+            // small primes hardcoded for efficiency-sake
+            if (n === 2 || n === 3) return true;
+            if (n === 5 || n === 7) return true;
+            if (n === 11 || n === 13) return true;
+            if (n === 17 || n === 19) return true;
+
+            // base cases as indicated in paper
+            if (n <= 1) return false;
+            if (n % 2 === 0) return false;
+
+            // variables as denoted in original paper
+            let k =  n - 1;
+            let i = 0;
+            while (k % 2 === 0) {
+                k = Math.floor(k / 2);
+                i++;
+            }
+
+            for (let j = 0; j < attempts; j++) {
+
+                // b is primality witness
+                let b = randomRange(1, n - 1);
+
+                // Check fermat primality first
+                if(!isPrimeFermat(b, n)) return false;
+
+                let gcd = greatestCommonDivisor(modPow(b, k, n) - 1, n);
+                if (gcd === 1 || gcd === n) {
+                    continue;
+                } else {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Inspired by "On Periods in the Reciprocals of Primes"
+        function shanksPeriod(prime) {
+            if (prime == 2 || prime == 5) {
+                throw new RangeError("The function does not support primes 2 or 5.");
+            }
+            let seen = {};
+            let max = parseInt('9'.repeat(String(prime).length));
+            for (let i = 1; i <= max; i++) {
+                seen[i] = 0;
+            }
+            let tracker = [];
+            let currentNumerator = 10;
+
+            while (true) {
+                let digit = Math.floor(currentNumerator / prime);
+                if (digit === 0) {
+                    if (seen[currentNumerator]) break;
+                    tracker.push(0);
+                    seen[currentNumerator] = 1;
+                    currentNumerator *= 10;
+                    continue;
+                }
+                currentNumerator = currentNumerator - (prime * digit);
+                if (seen[currentNumerator]) break;
+                else {
+                    seen[currentNumerator] = 1;
+                    tracker.push(digit);
+                    currentNumerator *= 10;
+                }
+            }
+            return tracker;
+        }
+
+        // Helper function for modular exponentiation
+        function modPow(base, exponent, mod) {
+            let result = 1;
+            base = base % mod;
+            while (exponent > 0) {
+                if (exponent % 2 === 1) {
+                    result = (result * base) % mod;
+                }
+                exponent = Math.floor(exponent / 2);
+                base = (base * base) % mod;
+            }
+            return result;
+        }
+
+        // Helper function for random integer in [min, max]
+        function randomRange(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Helper function for finding Greatest Common Divisor using Euclidean Method
+        function greatestCommonDivisor(a, b) {
+            a = Math.abs(a);
+            b = Math.abs(b);
+            while (b) {
+                let t = b;
+                b = a % b;
+                a = t;
+            }
+            return a;
+        }
+
+
+
+
+
+        function analyzeNumber() {
+            const input = document.getElementById('numberInput');
+            const resultDiv = document.getElementById('result');
+            const num = parseInt(input.value);
+            
+            // Reset styling
+            resultDiv.className = '';
+            resultDiv.innerHTML = '';
+
+            if (isNaN(num) || num < 2) {
+                resultDiv.textContent = 'Please enter a valid number greater than 1';
+                resultDiv.className = 'error';
+                return;
+            }
+
+            try {
+                if (num === 2 || num === 5) {
+                    throw new RangeError("Invalid prime input");
+                }
+
+                if (isPrimeMillerRabin(num)) {
+                    const period = shanksPeriod(num);
+                    resultDiv.innerHTML = `
+                        <strong>Prime Number!</strong><br>
+                        Shanks Period Length: ${period.length}<br>
+                        Period Digits: ${period.join('')}
+                    `;
+                    resultDiv.className = 'prime';
+                } else {
+                    resultDiv.textContent = 'Composite number';
+                    resultDiv.className = 'composite';
+                }
+            } catch (e) {
+                if (e instanceof RangeError) {
+                    resultDiv.textContent = 'Invalid prime input: 2 or 5 not supported';
+                } else {
+                    resultDiv.textContent = 'Error processing number';
+                }
+                resultDiv.className = 'error';
+            }
+        }
+    </script>
+</body>
+</html>

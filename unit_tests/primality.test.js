@@ -73,6 +73,7 @@ describe('shanksPeriod', () => {
             "The function does not support primes 2 or 5."
         );
     });
+    
     test('gives correct period', () => {
         expect(shanksPeriod(3)).toEqual([3]);
         expect(shanksPeriod(7)).toEqual([1, 4, 2, 8, 5, 7])
